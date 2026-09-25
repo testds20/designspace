@@ -1,30 +1,25 @@
-# DesignSpace
+# DesignSpace Agency
 
-> DesignSpace is a design subscription providing ongoing marketing design for B2B tech and cybersecurity teams. One subscription, all design assets covered. Tagline: "Tech Marketing, Designed Better." Operating since 2018.
+> Marketing design subscription and AI brand systems for B2B tech and cybersecurity marketing teams. Founded 2020, trusted by 100+ tech and cyber teams. Official design partner of the Cybersecurity Marketing Society.
 
-## What we do
-A flat-rate monthly design subscription that acts as an outsourced creative team for B2B tech and cybersecurity marketing departments. Specialists across every marketing format, a dedicated project manager, and founder-led quality control. Work is submitted and tracked in Asana (no request forms) and delivered in Figma, Canva, or Google Drive.
+DesignSpace Agency (designspaceagency.com) is a design partner for B2B tech and cybersecurity marketing teams. It has two offerings:
+- **Design subscription (since 2020):** expert designers produce decks, reports, eBooks, ads, social content, diagrams, product mockups and event assets.
+- **AI brand systems (new in 2026):** DesignSpace builds a client's existing brand into the AI and design tools their team already uses, so work made in Claude, ChatGPT, Figma and Canva stays on-brand. It then reviews the output and fixes drift.
 
-## Design assets covered
-Ad campaigns, reports, decks, social content, banners, carousels, landing pages, cover images, guides, event booths, dashboards, illustrations, product mockups, icons, eBooks, technical diagrams, case studies.
+DesignSpace maintains and evolves established brands. It does not do full rebrands or new brand identities.
 
-## Plans
-- Pro — $4,999/month — 40 hours, 4–8 projects, up to 10 rollover hours
-- Extra (most popular) — $8,999/month — 80 hours, 6–12 projects, up to 15 rollover hours
-- Mega — $12,999/month — 120 hours, 8–16 projects, up to 20 rollover hours
+## Services and pricing
+- Brand Drift Audit: free. Scores the last 30 days of a team's design work against their brand and delivers 5 before/after fixes.
+- AI Brand Design Ops: $7,499 one-time, delivered in 3–6 weeks. Installs the brand system in Claude, ChatGPT, Figma and Canva, with AI templates for the top 10 asset types, a red-team pass, and team training. Optional maintenance: +$2,499/mo.
+- Studio Plan: monthly design subscription with a 3-month minimum and a dedicated project manager. Pro $4,999/mo, Extra $8,999/mo, Mega $12,999/mo. Includes Design Ops and maintenance.
 
-Every plan: expert B2B tech designers, dedicated project manager, unlimited active projects/asset types/revisions, add your whole team, no submission forms, rollover hours, and the ability to upgrade, downgrade, pause, or cancel anytime.
+## Clients
+OnePlus, Kasada, Hyperproof, Seemplicity, MazeBolt, Intrusion, AirMDR, Votiro, Cybersixgill, Britive
 
-## Who it's for
-Marketing, demand-gen, content, and design leaders at B2B technology and cybersecurity companies who need consistent, high-quality creative output without hiring in-house.
-
-## Process
-1. Kickoff — align on team, priorities, and workflows; set up Asana board, shared Figma file, and brand assets folder.
-2. Submit tasks — drop tasks into Asana; the team designs, the creative director reviews, you receive polished work (most tasks in 2–3 business days).
-3. Scale — upgrade for launches, downgrade in quiet months, pause anytime.
-
-## Contact
-- Website: https://designspaceagency.com
-- Email: hello@designspaceagency.com
-- LinkedIn: https://www.linkedin.com/company/designspace-agency/
-- Book a discovery call: https://cal.com/ian-barin/discovery
+## Links
+- [Homepage](https://designspaceagency.com/)
+- [Pricing](https://designspaceagency.com/#pricing)
+- [FAQ](https://designspaceagency.com/#faq)
+- [Book a discovery call](https://cal.com/ian-barin/discovery-call)
+- [Free Brand Drift Audit](https://cal.com/ian-barin/audit)
+- [LinkedIn](https://www.linkedin.com/company/designspace-agency/)
