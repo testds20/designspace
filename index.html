@@ -1583,6 +1583,191 @@ br.cmsbr{display:none}
  ]
 }
 </script>
+<style>
+:root{
+  --c1:#F9A13A;      /* orange */
+  --c2:#EC3F9F;      /* pink   */
+  --c3:#5B4CF0;      /* indigo */
+  --c4:#56B8FF;      /* sky    */
+  --spectrum:linear-gradient(90deg,var(--c1),var(--c2),var(--c3),var(--c4));
+  /* text gradient skips orange: orange text on white reads brown and muddy */
+  --spectrum-text:linear-gradient(90deg,var(--c2),var(--c3),var(--c4),var(--c3),var(--c2));
+  --edge:linear-gradient(90deg,transparent 0%,var(--c1) 16%,var(--c2) 40%,var(--c3) 66%,var(--c4) 86%,transparent 100%);
+  --fx-bar-h:38px;
+}
+
+/* ---------- 1. Announcement bar ---------- */
+/* three columns: gradient | text | gradient. The text column is "auto", so the gradients can only
+   fill the space left over and can never sit behind the words. */
+.fx-bar{
+  position:relative;z-index:101;height:var(--fx-bar-h);
+  display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;
+  background:#0b0b0b;color:#fff;font-size:13px;letter-spacing:-.005em;
+  overflow:hidden;white-space:nowrap;
+}
+.fx-bar-c{padding:0 18px;display:flex;align-items:center;gap:10px}
+/* Each side is the spectrum with a fixed black fade laid over it (no mask, so nothing can ghost).
+   At rest the color is a short stub on the outer edge; on hover the fade slides inward and the color
+   grows toward the text. The fade always ends in solid black before the text column. */
+@property --fs{syntax:'<percentage>';inherits:false;initial-value:0%}
+@property --fe{syntax:'<percentage>';inherits:false;initial-value:40%}
+.fx-bar-l,.fx-bar-r{
+  align-self:stretch;--fs:0%;--fe:40%;
+  transition:--fs .8s cubic-bezier(.16,1,.3,1),--fe .8s cubic-bezier(.16,1,.3,1);
+}
+.fx-bar-l{background:
+  linear-gradient(90deg,transparent var(--fs),#0b0b0b var(--fe)),
+  linear-gradient(90deg,var(--c1),var(--c2) 33%,var(--c3) 66%,var(--c4))}
+.fx-bar-r{background:
+  linear-gradient(270deg,transparent var(--fs),#0b0b0b var(--fe)),
+  linear-gradient(270deg,var(--c4),var(--c3) 33%,var(--c2) 66%,var(--c1))}
+.fx-bar:hover .fx-bar-l,.fx-bar:hover .fx-bar-r{--fs:35%;--fe:100%}
+.fx-bar a{font-weight:600;color:#fff;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(255,255,255,.4)}
+.fx-bar a:hover{text-decoration-color:#fff}
+@media(max-width:560px){.fx-bar{font-size:12px}.fx-bar .fx-bar-long{display:none}.fx-bar-c{padding:0 12px}}
+nav{top:var(--fx-nav-top,var(--fx-bar-h))}
+@media(min-width:861px){
+  .hero-card{min-height:min(calc(100svh - 32px - var(--fx-bar-h)),1180px)}
+}
+
+/* ---------- 2. Edge glow on hover: a slim band on the bottom edge ---------- */
+.fx-card{position:relative;isolation:isolate;overflow:hidden}
+.fx-glow{
+  position:absolute;left:0;right:0;bottom:0;height:20px;z-index:-1;pointer-events:none;
+  opacity:0;transition:opacity .35s ease;
+  /* one spectrum band along the edge, fading upward: the same light as the banner and footer */
+  background:var(--edge);
+  -webkit-mask-image:linear-gradient(to top,#000 0,rgba(0,0,0,.45) 35%,transparent 100%);
+          mask-image:linear-gradient(to top,#000 0,rgba(0,0,0,.45) 35%,transparent 100%);
+}
+.fx-glow::after{content:"";position:absolute;left:6%;right:6%;bottom:0;height:2px;background:var(--edge)}
+.fx-card:hover>.fx-glow,.fx-card:focus-within>.fx-glow,.fx-host:hover .fx-glow{opacity:.85}
+/* pricing cards: keep the glow under the CTA button */
+.pc-card>.fx-glow{height:18px}
+/* featured card sits in a 2px black frame; its 1px transparent border must show the frame, not the card's white, under the glow */
+.pc-feature>.pc-card{background-clip:padding-box}
+/* the Studio plan card and the dark Brand Health widget carry a faint resting edge */
+.pc-card--dark>.fx-glow,.app-widget>.fx-glow,.fx-dark>.fx-glow{opacity:.55}
+.pc-card--dark:hover>.fx-glow,.fx-dark:hover>.fx-glow{opacity:1}
+
+/* ---------- 3. Buttons: unchanged from live (no color effect) ---------- */
+.btn-ghost:hover{box-shadow:0 14px 34px -14px rgba(91,76,240,.35)}
+
+
+.hero-h1:not(.fx-split){opacity:0;animation:fxshow 0s 2.5s forwards}
+@keyframes fxshow{to{opacity:1}}
+.hero-text > .hero-h1,h2.fx-split{opacity:1!important;transform:none!important}
+.fx-split .fx-w{display:inline-block;white-space:nowrap}
+.fx-split .fx-c{display:inline-block}
+.fx-split:not(.fx-in) .fx-c,.fx-split:not(.fx-in) .fx-g{opacity:0}
+.fx-split.fx-in .fx-c{
+  animation:
+    fxfade .4s ease-out calc(var(--d,0)*1ms) backwards,
+    fxcolor .42s linear calc(var(--d,0)*1ms) backwards;
+}
+@keyframes fxfade{0%{opacity:0}}
+@keyframes fxcolor{
+  0%{color:var(--c2)}
+  40%{color:var(--c3)}
+  75%{color:var(--c4)}
+}
+/* the gradient word: one per headline. Padding keeps descenders (g, y, p) from clipping. */
+.fx-g{
+  display:inline-block;
+  padding:0 .04em .22em;margin:0 -.04em -.22em;
+  background:var(--spectrum-text);background-size:300% 100%;
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+}
+.fx-split.fx-in .fx-g{
+  animation:
+    fxfade .4s ease-out calc(var(--d,0)*1ms) backwards,
+    fxflow 10s linear calc(var(--d,0)*1ms + 600ms) infinite;
+}
+/* flows left to right, same direction as the intro sweep */
+@keyframes fxflow{from{background-position:300% 0}to{background-position:0 0}}
+
+
+/* ---------- 4b. Hero entrance: one calm choreography, no vertical movement ----------
+   The live page lifts each hero element 30px with GSAP, which fights the letter fade (eyebrow rose from
+   below while the headline faded in from the left). Here everything simply fades in, in reading order. */
+nav .bubble,.hero-text > *{opacity:1!important;transform:none!important}
+nav .bubble{animation:fxheroin .6s ease-out both}
+.hero-text > :nth-child(1){animation:fxheroin .6s ease-out both}
+.hero-text > :nth-child(3){animation:fxheroin .6s ease-out .38s both}
+.hero-text > :nth-child(4){animation:fxheroin .6s ease-out .48s both}
+.hero-text > :nth-child(5){animation:fxheroin .6s ease-out .58s both}
+@keyframes fxheroin{from{opacity:0}}
+@media(prefers-reduced-motion:reduce){nav .bubble,.hero-text > *{animation:none}}
+
+/* ---------- 5. Gradient accents ---------- */
+.proc-bar i{background:var(--spectrum)!important}
+.hero-h1,.h-xl{letter-spacing:-.04em}
+.hero-h1{letter-spacing:-.05em}
+
+/* hero glow removed (Ian, Oct 14) */
+
+/* ---------- 7. Dark footer ---------- */
+footer{
+  position:relative;isolation:isolate;
+  background:#0b0b0b;color:#fff;margin-top:clamp(40px,5vw,72px);
+  border-radius:clamp(28px,3vw,44px) clamp(28px,3vw,44px) 0 0;
+}
+footer .foot-head,footer .foot-col a{color:#fff}
+footer .foot-head .serif{color:rgba(255,255,255,.55)}
+footer .foot-copy,footer .foot-col h4{color:rgba(255,255,255,.55)}
+footer .foot-col a{opacity:.86}
+footer .foot-col a:hover{opacity:1}
+/* wordmark: crop below the baseline so the logo sits flush on the bottom edge (descenders of g and p are hidden).
+   logo.svg is 160x23 with the baseline at y=18 */
+footer .foot-word{padding-bottom:0}
+.fx-wm{position:relative;display:block;overflow:hidden;aspect-ratio:160 / 18.3}
+footer .foot-word img{filter:invert(1);display:block;width:100%;height:auto}
+.fx-wm::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  -webkit-mask:url('logo.svg') top left/100% auto no-repeat;mask:url('logo.svg') top left/100% auto no-repeat;
+  /* one soft light that rises from the bottom edge of the letters; its colors come from where the cursor is */
+  background:radial-gradient(40% 50% at var(--mx,50%) 100%,var(--gc,#EC3F9F) 0%,var(--gc2,#5B4CF0) 50%,transparent 100%);
+  opacity:0;transition:opacity .35s ease;
+}
+.fx-wm:hover::after,.fx-wm:focus-visible::after{opacity:1}
+
+/* footer link grid: tighter, calmer spacing; real columns on tablet and phone */
+footer .foot-col a{font-size:16px;font-weight:500;margin-bottom:0;padding:5px 0;min-height:0;line-height:1.35}
+footer .foot-col h4{margin-bottom:12px}
+@media(min-width:821px){
+  footer .foot-colstack{gap:clamp(18px,1.8vw,26px)}
+}
+@media(max-width:820px){
+  footer{padding-top:clamp(44px,7vw,60px)}
+  /* flatten the Connect + Legal stack so all three link groups sit in one row on tablet */
+  footer .foot-colstack{display:contents}
+  footer .foot-top{grid-template-columns:repeat(3,minmax(0,1fr));gap:30px 20px;padding-bottom:30px}
+  footer .foot-brand{grid-column:1/-1}
+  footer .foot-head{white-space:normal;font-size:clamp(1.7rem,5.6vw,2.4rem)}
+  footer .foot-copy{margin-top:16px}
+  footer .foot-word{margin-top:clamp(20px,4vw,36px)}
+}
+@media(max-width:560px){
+  /* phone: Company and Connect side by side, Legal as a quiet inline row underneath */
+  footer .foot-top{grid-template-columns:1fr 1fr;gap:26px 20px;padding-bottom:26px}
+  footer .foot-copy{font-size:10.5px;letter-spacing:.03em}
+  footer .foot-col a{font-size:15px;padding:4px 0}
+  footer .foot-col:last-child{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:2px 20px;
+    padding-top:20px;border-top:1px solid rgba(255,255,255,.12)}
+  footer .foot-col:last-child h4{display:none}
+  footer .foot-col:last-child a{font-size:14px;font-weight:400;opacity:.7}
+}
+@media(max-width:380px){
+  footer .foot-head{font-size:1.55rem}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .hero-card::before,.fx-g,.fx-split.fx-in .fx-c,.fx-split.fx-in .fx-g{animation:none}
+  .hero-h1:not(.fx-split){opacity:1;animation:none}
+  .fx-split .fx-c,.fx-split .fx-g{opacity:1!important}
+}
+</style>
 </head>
 <body>
 <!-- ============ NAV ============ -->
@@ -3497,6 +3682,145 @@ Cal.ns.discoveryCall("ui", { hideEventTypeDetails: false, layout: "month_view" }
   });
   tabs.forEach(function(t){t.addEventListener('click',function(){setTier(t.dataset.tier);});});
   setTier('Extra');
+})();
+</script>
+<script>
+(function(){
+  var RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var PAL = [[236,63,159],[91,76,240],[86,184,255]];   /* pink, indigo, sky */
+
+  /* ---- announcement bar + nav offset ---- */
+  var bar = document.createElement('div');
+  bar.className = 'fx-bar';
+  bar.innerHTML = '<span class="fx-bar-l" aria-hidden="true"></span><span class="fx-bar-c"><span>Start with a free Brand Drift Audit<span class="fx-bar-long">. See where your brand is drifting.</span></span><a href="#pricing">Get Started →</a></span><span class="fx-bar-r" aria-hidden="true"></span>';
+  document.body.insertBefore(bar, document.body.firstChild);
+  function navOffset(){
+    var h = bar.offsetHeight || 38;
+    document.documentElement.style.setProperty('--fx-nav-top', Math.max(0, h - window.scrollY) + 'px');
+  }
+  navOffset();
+  window.addEventListener('scroll', navOffset, {passive:true});
+  window.addEventListener('resize', navOffset);
+
+  /* ---- hover glow cards (Why DesignSpace cards intentionally excluded) ---- */
+  var CARD_SEL = '.cap-card, .pc-card, .app-widget';
+  document.querySelectorAll(CARD_SEL).forEach(function(card){
+    if (card.querySelector(':scope > .fx-glow')) return;
+    card.classList.add('fx-card');
+    if (card.classList.contains('pc-card--dark')) card.classList.add('fx-dark');
+    var g = document.createElement('span');
+    g.className = 'fx-glow';
+    g.setAttribute('aria-hidden','true');
+    card.insertBefore(g, card.firstChild);
+    card.addEventListener('pointermove', function(e){
+      var r = card.getBoundingClientRect();
+      var x = Math.max(8, Math.min(92, ((e.clientX - r.left) / r.width) * 100));
+      card.style.setProperty('--mx', x.toFixed(1) + '%');
+    }, {passive:true});
+  });
+
+  /* ---- footer wordmark: white logo, color glows inside its lower edge on hover ---- */
+  var fw = document.querySelector('.foot-word a');
+  var SPEC = [[249,161,58],[236,63,159],[91,76,240],[86,184,255]];   /* orange, pink, indigo, sky */
+  function spec(t){
+    t = Math.max(0, Math.min(1, t));
+    var s = t * (SPEC.length - 1), i = Math.min(SPEC.length - 2, Math.floor(s)), f = s - i, a = SPEC[i], b = SPEC[i+1];
+    return 'rgb(' + [0,1,2].map(function(k){ return Math.round(a[k] + (b[k]-a[k])*f); }).join(',') + ')';
+  }
+  if (fw){
+    fw.classList.add('fx-wm');
+    fw.addEventListener('pointermove', function(e){
+      var r = fw.getBoundingClientRect();
+      var p = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+      fw.style.setProperty('--mx', (p * 100).toFixed(1) + '%');
+      fw.style.setProperty('--gc', spec(p));
+      fw.style.setProperty('--gc2', spec(p + 0.28));
+    }, {passive:true});
+  }
+
+  /* ---- split-text reveal: one smooth sweep per line, line by line ---- */
+  if (RM) return;
+  var HEADS = document.querySelectorAll('.hero-h1, h2.h-xl, h2.foot-head');
+  function splitNode(node){
+    Array.prototype.slice.call(node.childNodes).forEach(function(n){
+      if (n.nodeType === 3){
+        var frag = document.createDocumentFragment();
+        n.textContent.split(/( )/).forEach(function(tok){
+          if (tok === ' '){ frag.appendChild(document.createTextNode(' ')); return; }
+          if (!tok) return;
+          var w = document.createElement('span'); w.className = 'fx-w';
+          Array.from(tok).forEach(function(ch){
+            var c = document.createElement('span');
+            c.className = 'fx-c';
+            c.textContent = ch;
+            w.appendChild(c);
+          });
+          frag.appendChild(w);
+        });
+        node.replaceChild(frag, n);
+      } else if (n.nodeType === 1 && n.tagName !== 'BR'){
+        splitNode(n);
+      }
+    });
+  }
+  function lastWordToGradient(h){
+    var words = h.querySelectorAll('.fx-w');
+    var w = words[words.length - 1];
+    if (!w) return;
+    var g = document.createElement('span');
+    g.className = 'fx-g';
+    g.textContent = w.textContent;
+    g.setAttribute('data-len', w.textContent.length);
+    w.parentNode.replaceChild(g, w);
+  }
+  function lerpPal(t){
+    var s = t * (PAL.length - 1), i = Math.min(PAL.length - 2, Math.floor(s)), f = s - i;
+    var a = PAL[i], b = PAL[i+1];
+    return 'rgb(' + [0,1,2].map(function(k){ return Math.round(a[k] + (b[k]-a[k])*f); }).join(',') + ')';
+  }
+  /* measure real lines at reveal time, then stagger: chars in a line sweep left to right,
+     and each line starts only after the previous one has finished */
+  var STEP = 12, SETTLE = 380;   /* SETTLE = last char's color cycle (.45s) + a hair */
+  function schedule(h){
+    var items = Array.prototype.slice.call(h.querySelectorAll('.fx-c, .fx-g'));
+    var lines = [], lastTop = null;
+    items.forEach(function(el){
+      var top = Math.round(el.getBoundingClientRect().top / 8);
+      if (lastTop === null || Math.abs(top - lastTop) > 2){ lines.push([]); lastTop = top; }
+      lines[lines.length - 1].push(el);
+    });
+    var start = 0;
+    lines.forEach(function(line){
+      var n = 0;
+      line.forEach(function(el){ n += el.classList.contains('fx-g') ? +el.getAttribute('data-len') : 1; });
+      var j = 0;
+      line.forEach(function(el){
+        var t = n > 1 ? j / (n - 1) : 0;
+        el.style.setProperty('--d', Math.round(start + j * STEP));
+        j += el.classList.contains('fx-g') ? +el.getAttribute('data-len') : 1;
+      });
+      start += (n - 1) * STEP + SETTLE;
+    });
+  }
+  function reveal(h){ schedule(h); h.classList.add('fx-in'); }
+
+  HEADS.forEach(function(h){
+    var label = h.textContent.replace(/\s+/g,' ').trim();
+    splitNode(h);
+    if (!h.classList.contains('foot-head')) lastWordToGradient(h);
+    h.setAttribute('aria-label', label);
+    h.querySelectorAll('.fx-w,.fx-g,.fx-c').forEach(function(s){ s.setAttribute('aria-hidden','true'); });
+    h.classList.add('fx-split');
+  });
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if (e.isIntersecting){ reveal(e.target); io.unobserve(e.target); }
+    });
+  }, {threshold:0.35, rootMargin:'0px 0px -6% 0px'});
+  document.querySelectorAll('.fx-split').forEach(function(h){
+    if (h.classList.contains('hero-h1')) requestAnimationFrame(function(){ reveal(h); });
+    else io.observe(h);
+  });
 })();
 </script>
 </body>
