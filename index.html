@@ -1622,8 +1622,11 @@ br.cmsbr{display:none}
   linear-gradient(270deg,transparent var(--fs),#0b0b0b var(--fe)),
   linear-gradient(270deg,var(--c4),var(--c3) 33%,var(--c2) 66%,var(--c1))}
 .fx-bar:hover .fx-bar-l,.fx-bar:hover .fx-bar-r{--fs:35%;--fe:100%}
-.fx-bar a{font-weight:600;color:#fff;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(255,255,255,.4)}
-.fx-bar a:hover{text-decoration-color:#fff}
+.fx-bar a{font-weight:600;color:#fff;text-decoration:none}
+.fx-bar-u{text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(255,255,255,.4);transition:text-decoration-color .25s}
+.fx-bar a:hover .fx-bar-u{text-decoration-color:#fff}
+.fx-bar-arr{display:inline-block;transition:transform .35s var(--ease)}
+.fx-bar a:hover .fx-bar-arr{transform:translateX(4px)}
 @media(max-width:560px){.fx-bar{font-size:12px}.fx-bar .fx-bar-long{display:none}.fx-bar-c{padding:0 12px}}
 nav{top:var(--fx-nav-top,var(--fx-bar-h))}
 @media(min-width:861px){
@@ -1767,6 +1770,151 @@ footer .foot-col h4{margin-bottom:12px}
   .hero-h1:not(.fx-split){opacity:1;animation:none}
   .fx-split .fx-c,.fx-split .fx-g{opacity:1!important}
 }
+</style>
+<style>
+/* ===== Asset tabs (prototype, alt layout) ===== */
+:root{--at-gap:clamp(36px,6vw,96px);--at-colgap:clamp(24px,4vw,56px);--at-pad:clamp(22px,3.2vw,44px)}
+.at{display:grid;grid-template-columns:minmax(190px,.5fr) minmax(0,2.5fr);column-gap:var(--at-gap);row-gap:var(--at-pad);
+  background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius-lg);
+  padding:var(--at-pad);margin-bottom:18px}
+
+/* tab list: every tab has its own 3px rounded bar (like the steps in Our Process). The active bar fills with the
+   rainbow over the dwell time; it starts with a head start so it never looks empty. clip-path keeps it smooth. */
+.at-tabs{position:relative;display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.at-seg{position:absolute;left:0;top:4px;bottom:4px;width:3px;border-radius:99px;background:var(--line);overflow:hidden}
+.at-seg i{position:absolute;inset:0;border-radius:99px;opacity:0;
+  background:linear-gradient(180deg,var(--c1,#F9A13A),var(--c2,#EC3F9F) 35%,var(--c3,#5B4CF0) 70%,var(--c4,#56B8FF));
+  clip-path:inset(0 0 82% 0 round 99px)}
+.at.is-run .at-tab[aria-selected="true"] .at-seg i{opacity:1;animation:atfill var(--at-dur,9000ms) linear forwards}
+.at.is-static .at-tab[aria-selected="true"] .at-seg i,.at.is-held .at-tab[aria-selected="true"] .at-seg i{opacity:1;animation:none;clip-path:inset(0 0 0 0 round 99px)}
+@keyframes atfill{from{clip-path:inset(0 0 82% 0 round 99px)}to{clip-path:inset(0 0 0 0 round 99px)}}
+.at-tab{position:relative;display:flex;align-items:center;gap:14px;text-align:left;width:100%;min-height:64px;
+  padding:12px 0 12px 24px;font-size:16px;font-weight:500;letter-spacing:-.01em;line-height:1.25;color:var(--ink-faint);
+  transition:color .3s ease}
+.at-tab:hover{color:var(--ink)}
+.at-tab[aria-selected="true"]{color:var(--ink);font-weight:600}
+.at-tab:focus-visible{outline:2px solid var(--ink);outline-offset:-2px;border-radius:6px}
+.at-tab-ico{width:20px;height:20px;flex:none;display:grid;place-items:center}
+.at-tab-ico svg{width:20px;height:20px;stroke:currentColor;stroke-width:1.6;fill:none}
+
+.at-stage{display:grid;min-width:0}
+.at-pane{grid-area:1/1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(22px,2.8vw,40px) var(--at-colgap);
+  align-content:start;visibility:hidden;pointer-events:none}
+.at-pane[hidden]{display:grid}
+.at-pane.is-active{visibility:visible;pointer-events:auto}
+.at-a{opacity:0;transform:translateY(12px);transition:opacity .35s ease,transform .35s ease}
+.at-pane.is-active .at-a{opacity:1;transform:none;
+  transition:opacity .6s ease calc(var(--i)*70ms + 120ms),transform .8s var(--ease) calc(var(--i)*70ms + 120ms)}
+.at-title{font-size:clamp(1.4rem,2.3vw,1.95rem);font-weight:400;letter-spacing:-.03em;line-height:1.15;margin:0 0 14px;min-height:2.3em;white-space:nowrap}
+.at-desc{color:var(--ink-soft);font-size:15.5px;line-height:1.55;max-width:46ch;margin:0 0 18px;
+  min-height:3.1em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+/* secondary link: underline sits under the words only; on hover only the arrow nudges right */
+.at-link{display:inline-flex;gap:6px;font-size:15px;font-weight:600;color:var(--ink)}
+.at-link-t{border-bottom:1px solid var(--ink);padding-bottom:2px}
+.at-arr{display:inline-block;transition:transform .35s var(--ease)}
+.at-link:hover .at-arr{transform:translateX(4px)}
+.at-items{list-style:none;margin:0;padding:0;display:grid;gap:12px;align-content:start;min-height:calc(36px * 4 + 12px * 3)}
+.at-items li{display:flex;align-items:center;gap:13px;font-size:15px;font-weight:500;min-height:36px}
+.at-item-ico{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;flex:none}
+.at-item-ico svg{width:17px;height:17px;stroke:var(--ink);stroke-width:1.6;fill:none}
+
+/* visuals: three fixed cards; inside each, backgrounds cross-fade and images rise in / lift out like the testimonials */
+.at-vis{grid-column:1/-1;display:grid;grid-template-columns:1.15fr 1fr;grid-template-rows:1fr 1fr;gap:clamp(12px,1.6vw,20px);
+  height:clamp(300px,31vw,430px)}
+.at-card{position:relative;margin:0;border-radius:20px;overflow:hidden;isolation:isolate;background:var(--bg-soft);container-type:size}
+.at-card--big{grid-row:1/3}
+.at-bgl{position:absolute;inset:-2px;z-index:0;background-size:cover;background-position:center;opacity:0;transition:opacity .9s ease}
+.at-bgl.is-on{opacity:1}
+.at-bgl--dots{background-color:var(--bg-soft);background-image:radial-gradient(rgba(16,16,16,.08) 1px,transparent 1px);background-size:18px 18px}
+.at-lyr{position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;
+  padding:clamp(10px,1.6vw,22px);padding-top:clamp(44px,4.4vw,56px);
+  opacity:0;transform:translateY(14px);transition:opacity .6s var(--ease),transform .6s var(--ease);will-change:opacity,transform;pointer-events:none}
+.at-card--big .at-lyr{padding:clamp(14px,2.2vw,32px);padding-top:clamp(48px,4.6vw,60px)}
+.at-lyr.is-on{opacity:1;transform:translateY(0)}
+.at-lyr.is-exit{opacity:0;transform:translateY(-14px)}
+.at-lyr img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 18px 36px rgba(0,0,0,.28))}
+.at-chip{position:absolute;left:14px;top:14px;z-index:3;padding:6px 11px;border-radius:99px;background:#fff;
+  font-family:var(--mono);font-weight:700;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-soft)}
+/* zoom: mockups are enlarged and cropped, rising in from the bottom right so only a sample shows */
+.at--zoom .at-lyr{padding:0}
+.at--zoom .at-lyr img{position:absolute;max-width:none;object-fit:fill;
+  width:calc(var(--iw) * 1cqw);height:auto;left:calc(var(--il) * 1cqw);top:var(--it);filter:drop-shadow(0 18px 36px rgba(0,0,0,.3))}
+
+/* tools row: same card, mirrors the card's two columns. The tool grid spans the width of the images; its
+   third column starts exactly where the checklist column above starts. */
+.at-foot{grid-column:1/-1;display:grid;grid-template-columns:minmax(190px,.5fr) minmax(0,2.5fr);gap:var(--at-gap);align-items:start;
+  padding-top:var(--at-pad);margin-top:0;border-top:1px solid var(--line)}   /* same space above the tools as below them */
+@supports (grid-template-columns:subgrid){.at-foot{grid-template-columns:subgrid;column-gap:var(--at-gap)}}
+.at-foot-label,.at-side-label{margin:0;padding-left:24px;font-family:var(--mono);font-weight:700;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-faint);line-height:36px}
+.at-side-label{margin-bottom:6px}
+.at-mprog{display:none}
+.at-foot-grid{display:grid;grid-template-columns:calc((100% - var(--at-colgap)) / 4) calc((100% - var(--at-colgap)) / 4) minmax(0,1fr);
+  column-gap:calc(var(--at-colgap) / 2);row-gap:12px}
+.at-foot .int-item{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:500;min-width:0;min-height:36px;white-space:nowrap}
+.at-foot .int-ico{width:34px;height:34px;border-radius:50%;flex:none;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+.at-foot .int-ico img{width:17px;height:17px;object-fit:contain}
+.at-foot .int-ico svg{width:17px;height:17px;stroke:var(--ink);stroke-width:1.6;fill:none}
+
+/* left-aligned hybrid section headline */
+.int-head.int-head--alt{text-align:left;align-items:flex-start;max-width:none}
+.int-head--alt .eyebrow{justify-content:flex-start}
+.int-head--alt h2{max-width:none;text-wrap:balance}
+
+.at-m{display:none}
+/* tablet: keeps the desktop structure (vertical tabs with their own bars), just tighter */
+@media(max-width:900px){
+  .int-head--alt h2 br{display:none}
+  :root{--at-gap:28px;--at-colgap:24px}
+  :root{--at-pad:24px}
+  .at{grid-template-columns:minmax(170px,.4fr) minmax(0,1fr)}
+  .at-title{font-size:1.5rem}
+  .at-vis{height:clamp(300px,46vw,400px)}
+  .at-foot-grid{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:14px}
+}
+/* phone: one category at a time, name left, arrows right, a single progress bar that belongs to that header;
+   visuals come right after the copy, the checklist drops below them as compact chips */
+@media(max-width:620px){
+  :root{--at-pad:26px}
+  .at{grid-template-columns:minmax(0,1fr);padding:24px 20px 30px;row-gap:20px}
+  .at-side{min-width:0}
+  .at-side-label,.at-foot-label{padding-left:0;line-height:1.2}
+  .at-side-label{margin-bottom:12px}
+  .at-tabs{display:none}
+  .at-m{display:block}
+  .at-m-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .at-m-cur{display:flex;align-items:center;gap:12px;min-width:0;font-size:19px;font-weight:600;letter-spacing:-.02em;line-height:1.2;color:var(--ink)}
+  .at-m-cur.is-in{animation:atin .55s var(--ease) both}
+  .at-m-ico{width:22px;height:22px;flex:none;display:grid;place-items:center}
+  .at-m-ico svg{width:22px;height:22px;stroke:currentColor;stroke-width:1.6;fill:none}
+  .at-m-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .at-m-arrows{display:flex;gap:8px;flex:none}
+  .at-m .h-arrow{width:42px;height:42px}
+  .at-mprog{display:block;height:3px;margin-top:14px;border-radius:99px;background:var(--line);overflow:hidden;position:relative}
+  .at-mprog i{position:absolute;inset:0;border-radius:99px;opacity:0;clip-path:inset(0 82% 0 0 round 99px);
+    background:linear-gradient(90deg,var(--c1,#F9A13A),var(--c2,#EC3F9F) 35%,var(--c3,#5B4CF0) 70%,var(--c4,#56B8FF))}
+  .at.is-run .at-mprog i{opacity:1;animation:atfillx var(--at-dur,9000ms) linear forwards}
+  .at.is-static .at-mprog i,.at.is-held .at-mprog i{opacity:1;animation:none;clip-path:inset(0 0 0 0 round 99px)}
+  .at-pane{grid-template-columns:minmax(0,1fr);gap:16px}
+  .at-copy{order:1}
+  .at-vis{order:2}
+  .at-items{order:3;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 14px;min-height:0}   /* 2 columns: always at least two lines */
+  .at-items li{min-height:0;gap:11px;font-size:14.5px;white-space:nowrap}
+  .at-item-ico{width:34px;height:34px}
+  .at-item-ico svg{width:16px;height:16px}
+  .at-title{min-height:0;font-size:clamp(1.45rem,5.6vw,1.8rem)}
+  .at-desc{min-height:0;max-width:none;font-size:14.5px;text-wrap:balance;-webkit-line-clamp:2}
+  .at-chip{left:10px;top:10px;padding:5px 9px;font-size:9.5px}
+  .at-vis{height:clamp(400px,104vw,540px);grid-template-columns:1fr 1fr;grid-template-rows:1.4fr 1fr}
+  .at-card{border-radius:16px}
+  .at-card--big{grid-column:1/-1;grid-row:1}
+  .at-foot{grid-column:1;grid-template-columns:minmax(0,1fr);gap:16px;padding-top:26px;margin-top:4px}
+  .at-foot-grid{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:14px;row-gap:12px}
+  .at-foot .int-item{font-size:14.5px}
+}
+@keyframes atfillx{from{clip-path:inset(0 82% 0 0 round 99px)}to{clip-path:inset(0 0 0 0 round 99px)}}
+@keyframes atin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.at-a,.at-pane.is-active .at-a,.at-lyr,.at-bgl{transition:none;transform:none}}
 </style>
 </head>
 <body>
@@ -2080,49 +2228,30 @@ footer .foot-col h4{margin-bottom:12px}
 <!-- ============ TOOLS & ASSET TYPES ============ -->
 <section id="stack" style="padding-top:0">
   <div class="wrap">
-    <div class="section-head int-head reveal">
+    <div class="section-head int-head int-head--alt reveal">
       <div class="eyebrow">Plugged Into Your Workflow</div>
-      <h2 class="h-xl">Every tool. Every asset.<br /><span class="serif">Seamlessly covered.</span></h2>
+      <h2 class="h-xl">Everything your marketing team needs,<br /><span class="serif">built into the tools your team already uses.</span></h2>
     </div>
-    <div class="int-panel reveal">
-      <div class="int-label">
-        <h3>We build your brand into the tools your team already uses</h3>
+    
+    <div class="at at--alt at--zoom reveal" data-reveal-delay="0.22" id="asset-tabs">
+      <div class="at-side">
+        <p class="at-side-label">What we design</p>
+        <div class="at-tabs" role="tablist" aria-orientation="vertical">
+          <button class="at-tab" role="tab" id="at-t0" aria-controls="at-p0" aria-selected="true" tabindex="0" data-at="0" aria-label="Campaigns &amp; Ads"><span class="at-tab-ico"><svg viewBox="0 0 24 24"><path d="M3 11l18-7-7 18-2.5-7.5z"/></svg></span><span class="at-tab-name">Campaigns <br>&amp; Ads</span><span class="at-seg" aria-hidden="true"><i></i></span></button><button class="at-tab" role="tab" id="at-t1" aria-controls="at-p1" aria-selected="false" tabindex="-1" data-at="1" aria-label="Social &amp; Video"><span class="at-tab-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01"/></svg></span><span class="at-tab-name">Social <br>&amp; Video</span><span class="at-seg" aria-hidden="true"><i></i></span></button><button class="at-tab" role="tab" id="at-t2" aria-controls="at-p2" aria-selected="false" tabindex="-1" data-at="2" aria-label="Reports &amp; Documents"><span class="at-tab-ico"><svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></span><span class="at-tab-name">Reports <br>&amp; Documents</span><span class="at-seg" aria-hidden="true"><i></i></span></button><button class="at-tab" role="tab" id="at-t3" aria-controls="at-p3" aria-selected="false" tabindex="-1" data-at="3" aria-label="Data &amp; Visuals"><span class="at-tab-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 13l3.5-3.5M9 3h6"/></svg></span><span class="at-tab-name">Data <br>&amp; Visuals</span><span class="at-seg" aria-hidden="true"><i></i></span></button><button class="at-tab" role="tab" id="at-t4" aria-controls="at-p4" aria-selected="false" tabindex="-1" data-at="4" aria-label="Brand &amp; AI Systems"><span class="at-tab-ico"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 1.6v2.4M15 1.6v2.4M9 20v2.4M15 20v2.4M1.6 9H4M1.6 15H4M20 9h2.4M20 15h2.4"/><path d="M12 8.1l1.15 2.75L15.9 12l-2.75 1.15L12 15.9l-1.15-2.75L8.1 12l2.75-1.15z"/></svg></span><span class="at-tab-name">Brand <br>&amp; AI Systems</span><span class="at-seg" aria-hidden="true"><i></i></span></button>
+        </div>
+        <div class="at-m">
+          <div class="at-m-row">
+            <span class="at-m-cur"><span class="at-m-ico"></span><span class="at-m-name"></span></span>
+            <span class="at-m-arrows">
+              <button class="h-arrow at-prev" type="button" aria-label="Previous category"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+              <button class="h-arrow at-next" type="button" aria-label="Next category"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+            </span>
+          </div>
+          <span class="at-mprog" aria-hidden="true"><i></i></span>
+        </div>
       </div>
-      <div class="int-grid">
-        <div class="int-item"><span class="int-ico"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/claude.svg" alt="" loading="lazy" onerror="this.replaceWith('Cl')" /></span>Claude</div>
-        <div class="int-item"><span class="int-ico"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/openai.svg" alt="" loading="lazy" onerror="this.replaceWith('AI')" /></span>ChatGPT</div>
-        <div class="int-item"><span class="int-ico"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/figma.svg" alt="" loading="lazy" onerror="this.replaceWith('Fi')" /></span>Figma</div>
-        <div class="int-item"><span class="int-ico"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/canva.svg" alt="" loading="lazy" onerror="this.replaceWith('Cv')" /></span>Canva</div>
-        <div class="int-item"><span class="int-ico"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/adobe.svg" alt="" loading="lazy" onerror="this.replaceWith('Ad')" /></span>Adobe Suite</div>
-        <div class="int-item"><span class="int-ico"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/framer.svg" alt="" loading="lazy" onerror="this.replaceWith('Fr')" /></span>Framer</div>
-        <div class="int-item"><span class="int-ico"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/asana.svg" alt="" loading="lazy" onerror="this.replaceWith('As')" /></span>Asana</div>
-        <div class="int-item"><span class="int-ico"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/googledrive.svg" alt="" loading="lazy" onerror="this.replaceWith('GD')" /></span>Google Drive</div>
-        <div class="int-item"><span class="int-ico"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/googleslides.svg" alt="" loading="lazy" onerror="this.replaceWith('GS')" /></span>Google Slides</div>
-      </div>
-      <button class="int-more" type="button" data-int-more>See more <span class="int-more-ico">+</span></button>
-    </div>
-    <div class="int-panel reveal" data-reveal-delay="0.22">
-      <div class="int-label">
-        <h3>Everything your marketing team needs, designed for you</h3>
-      </div>
-      <div class="int-grid">
-        <div class="int-item"><span class="int-ico"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 1.6v2.4M15 1.6v2.4M9 20v2.4M15 20v2.4M1.6 9H4M1.6 15H4M20 9h2.4M20 15h2.4"/><path d="M12 8.1l1.15 2.75L15.9 12l-2.75 1.15L12 15.9l-1.15-2.75L8.1 12l2.75-1.15z"/></svg></span>AI Systems</div>
-        <div class="int-item"><span class="int-ico"><svg viewBox="0 0 24 24"><path d="M3 11l18-7-7 18-2.5-7.5z"/></svg></span>Ad Campaigns</div>
-        <div class="int-item"><span class="int-ico"><svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></span>Reports</div>
-        <div class="int-item"><span class="int-ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="12" rx="2"/><path d="M12 15v4M8 21l4-2 4 2"/></svg></span>Decks</div>
-        <div class="int-item"><span class="int-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01"/></svg></span>Social Content</div>
-        <div class="int-item"><span class="int-ico"><svg viewBox="0 0 24 24"><path d="M4 4h16v10H4zM4 14l4 6M20 14l-4 6"/></svg></span>Banners</div>
-        <div class="int-item"><span class="int-ico"><svg viewBox="0 0 24 24"><rect x="7" y="5" width="10" height="14" rx="2"/><path d="M3 8v8M21 8v8"/></svg></span>Carousels</div>
-        <div class="int-item"><span class="int-ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M3 17l5-4 4 3 5-5 4 4"/></svg></span>Cover Images</div>
-        <div class="int-item"><span class="int-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 13l3.5-3.5M9 3h6"/></svg></span>Dashboards</div>
-        <div class="int-item"><span class="int-ico"><svg viewBox="0 0 24 24"><path d="M12 19l7-7a4.2 4.2 0 00-6-6l-7 7-2 8z"/><path d="M11 6l7 7"/></svg></span>Illustrations</div>
-        <div class="int-item"><span class="int-ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><circle cx="17.5" cy="6.5" r="3.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="3.5"/></svg></span>Icons</div>
-        <div class="int-item"><span class="int-ico"><svg viewBox="0 0 24 24"><path d="M4 19V5a2 2 0 012-2h13v16H6a2 2 0 000 4h13"/></svg></span>eBooks</div>
-        <div class="int-item"><span class="int-ico"><svg viewBox="0 0 24 24"><path d="M14 3v5h5M6 3h9l4 4v14H6z"/><path d="M9 12h6M9 16h4"/></svg></span>Case Studies</div>
-        <div class="int-item"><span class="int-ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/></svg></span>Video Templates</div>
-        <div class="int-item"><span class="int-ico"><svg viewBox="0 0 24 24"><path d="M4 3l7 17 2.6-6.4L20 11z"/></svg></span>Interactive Tools</div>
-      </div>
-      <button class="int-more" type="button" data-int-more>See more <span class="int-more-ico">+</span></button>
+      <div class="at-stage"><div class="at-pane is-active" role="tabpanel" id="at-p0" aria-labelledby="at-t0" ><div class="at-copy"><h4 class="at-title at-a" style="--i:0">One brand across<br>every campaign.</h4><p class="at-desc at-a" style="--i:1">Launch-ready creative for every channel, sized for the platforms you run on.</p><a class="at-link at-a" style="--i:2" href="#work"><span class="at-link-t">See the work</span> <span class="at-arr" aria-hidden="true">→</span></a></div><ul class="at-items at-a" style="--i:3"><li><span class="at-item-ico"><svg viewBox="0 0 24 24"><path d="M3 11l18-7-7 18-2.5-7.5z"/></svg></span>Ad Campaigns</li><li><span class="at-item-ico"><svg viewBox="0 0 24 24"><path d="M4 4h16v10H4zM4 14l4 6M20 14l-4 6"/></svg></span>Banners</li><li><span class="at-item-ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M3 17l5-4 4 3 5-5 4 4"/></svg></span>Cover Images</li></ul><div class="at-vis at-a" style="--i:4"><figure class="at-card at-card--big" style="--k:0" data-items="[[&quot;intrusion-ad-campaigns.webp&quot;, &quot;grad-intrusion.webp&quot;, &quot;Ad Campaigns&quot;, 122.71, 9.72, &quot;calc(16cqh - 11.56cqw)&quot;], [&quot;cybersixgill-ad-campaigns.webp&quot;, &quot;grad-cybersixgill.webp&quot;, &quot;Ad Campaigns&quot;, 123.16, 9.28, &quot;calc(16cqh - 9.17cqw)&quot;], [&quot;britive-ad-campaigns.webp&quot;, &quot;grad-britive.webp&quot;, &quot;Ad Campaigns&quot;, 122.56, 9.72, &quot;calc(16cqh - 11.54cqw)&quot;]]" data-cur="0" data-layer="0"><span class="at-bgl is-on" style="background-image:url('grad-intrusion.webp')"></span><span class="at-bgl"></span><span class="at-lyr is-on" style="--iw:122.71;--il:9.72;--it:calc(16cqh - 11.56cqw)"><img src="intrusion-ad-campaigns.webp" alt="Ad Campaigns design example" loading="eager" /><span class="at-chip">Ad Campaigns</span></span><span class="at-lyr" style="--iw:122.71;--il:9.72;--it:calc(16cqh - 11.56cqw)"><img src="intrusion-ad-campaigns.webp" alt="" /><span class="at-chip"></span></span></figure><figure class="at-card" style="--k:1" data-items="[[&quot;britive-event-banners.webp&quot;, &quot;grad-britive.webp&quot;, &quot;Banners&quot;, 118.62, 12.9, &quot;calc(13cqh - 10.21cqw)&quot;], [&quot;cybermarketingcon-event-banners.webp&quot;, &quot;cms-gradient.webp&quot;, &quot;Banners&quot;, 122.21, 10.89, &quot;calc(13cqh - 9.52cqw)&quot;], [&quot;seemplicity-event-banners.webp&quot;, &quot;grad-seemplicity.webp&quot;, &quot;Banners&quot;, 142.89, 0.55, &quot;calc(13cqh - 13.46cqw)&quot;]]" data-cur="0" data-layer="0"><span class="at-bgl is-on" style="background-image:url('grad-britive.webp')"></span><span class="at-bgl"></span><span class="at-lyr is-on" style="--iw:118.62;--il:12.9;--it:calc(13cqh - 10.21cqw)"><img src="britive-event-banners.webp" alt="Banners design example" loading="eager" /><span class="at-chip">Banners</span></span><span class="at-lyr" style="--iw:118.62;--il:12.9;--it:calc(13cqh - 10.21cqw)"><img src="britive-event-banners.webp" alt="" /><span class="at-chip"></span></span></figure><figure class="at-card" style="--k:2" data-items="[[&quot;kasada-ad-campaigns.webp&quot;, &quot;grad-kasada.webp&quot;, &quot;Ad Campaigns&quot;, 112.17, 15.91, &quot;calc(13cqh - 10.57cqw)&quot;], [&quot;oneplus-ad-campaigns.webp&quot;, &quot;grad-oneplus.webp&quot;, &quot;Ad Campaigns&quot;, 127.58, 8.21, &quot;calc(13cqh - 4.90cqw)&quot;], [&quot;cybersixgill-social-banners.webp&quot;, &quot;grad-cybersixgill.webp&quot;, &quot;Banners&quot;, 112.72, 15.51, &quot;calc(13cqh - 8.39cqw)&quot;]]" data-cur="0" data-layer="0"><span class="at-bgl is-on" style="background-image:url('grad-kasada.webp')"></span><span class="at-bgl"></span><span class="at-lyr is-on" style="--iw:112.17;--il:15.91;--it:calc(13cqh - 10.57cqw)"><img src="kasada-ad-campaigns.webp" alt="Ad Campaigns design example" loading="eager" /><span class="at-chip">Ad Campaigns</span></span><span class="at-lyr" style="--iw:112.17;--il:15.91;--it:calc(13cqh - 10.57cqw)"><img src="kasada-ad-campaigns.webp" alt="" /><span class="at-chip"></span></span></figure></div></div><div class="at-pane" role="tabpanel" id="at-p1" aria-labelledby="at-t1" hidden><div class="at-copy"><h4 class="at-title at-a" style="--i:0">Social that<br>keeps its shape.</h4><p class="at-desc at-a" style="--i:1">Posts, carousels, and video templates your team can reuse and stay on brand.</p><a class="at-link at-a" style="--i:2" href="#work"><span class="at-link-t">See the work</span> <span class="at-arr" aria-hidden="true">→</span></a></div><ul class="at-items at-a" style="--i:3"><li><span class="at-item-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01"/></svg></span>Social Content</li><li><span class="at-item-ico"><svg viewBox="0 0 24 24"><rect x="7" y="5" width="10" height="14" rx="2"/><path d="M3 8v8M21 8v8"/></svg></span>Carousels</li><li><span class="at-item-ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/></svg></span>Video Templates</li></ul><div class="at-vis at-a" style="--i:4"><figure class="at-card at-card--big" style="--k:0" data-items="[[&quot;britive-carousel-posts.webp&quot;, &quot;grad-britive.webp&quot;, &quot;Carousels&quot;, 129.94, 6.11, &quot;calc(16cqh - 11.03cqw)&quot;], [&quot;cybermarketingcon-social-campaigns.webp&quot;, &quot;cms-gradient.webp&quot;, &quot;Social Content&quot;, 122.56, 9.72, &quot;calc(16cqh - 11.54cqw)&quot;], [&quot;cybermarketingcon-postcards.webp&quot;, &quot;cms-gradient.webp&quot;, &quot;Social Content&quot;, 137.51, 2.25, &quot;calc(16cqh - 9.11cqw)&quot;]]" data-cur="0" data-layer="0"><span class="at-bgl is-on" style="background-image:url('grad-britive.webp')"></span><span class="at-bgl"></span><span class="at-lyr is-on" style="--iw:129.94;--il:6.11;--it:calc(16cqh - 11.03cqw)"><img src="britive-carousel-posts.webp" alt="Carousels design example" loading="lazy" /><span class="at-chip">Carousels</span></span><span class="at-lyr" style="--iw:129.94;--il:6.11;--it:calc(16cqh - 11.03cqw)"><img src="britive-carousel-posts.webp" alt="" /><span class="at-chip"></span></span></figure><figure class="at-card" style="--k:1" data-items="[[&quot;cybersixgill-social-banners.webp&quot;, &quot;grad-cybersixgill.webp&quot;, &quot;Social Content&quot;, 112.72, 15.51, &quot;calc(13cqh - 8.39cqw)&quot;], [&quot;intrusion-ad-campaigns.webp&quot;, &quot;grad-intrusion.webp&quot;, &quot;Social Content&quot;, 112.31, 15.91, &quot;calc(13cqh - 10.58cqw)&quot;], [&quot;cybersixgill-ad-campaigns.webp&quot;, &quot;grad-cybersixgill.webp&quot;, &quot;Social Content&quot;, 112.72, 15.51, &quot;calc(13cqh - 8.39cqw)&quot;]]" data-cur="0" data-layer="0"><span class="at-bgl is-on" style="background-image:url('grad-cybersixgill.webp')"></span><span class="at-bgl"></span><span class="at-lyr is-on" style="--iw:112.72;--il:15.51;--it:calc(13cqh - 8.39cqw)"><img src="cybersixgill-social-banners.webp" alt="Social Content design example" loading="lazy" /><span class="at-chip">Social Content</span></span><span class="at-lyr" style="--iw:112.72;--il:15.51;--it:calc(13cqh - 8.39cqw)"><img src="cybersixgill-social-banners.webp" alt="" /><span class="at-chip"></span></span></figure><figure class="at-card" style="--k:2" data-items="[[&quot;kasada-social-campaigns.webp&quot;, &quot;grad-kasada.webp&quot;, &quot;Social Content&quot;, 126.71, 8.57, &quot;calc(13cqh - 6.19cqw)&quot;], [&quot;oneplus-ad-campaigns.webp&quot;, &quot;grad-oneplus.webp&quot;, &quot;Social Content&quot;, 127.58, 8.21, &quot;calc(13cqh - 4.90cqw)&quot;], [&quot;seemplicity-event-banners.webp&quot;, &quot;grad-seemplicity.webp&quot;, &quot;Social Content&quot;, 142.89, 0.55, &quot;calc(13cqh - 13.46cqw)&quot;]]" data-cur="0" data-layer="0"><span class="at-bgl is-on" style="background-image:url('grad-kasada.webp')"></span><span class="at-bgl"></span><span class="at-lyr is-on" style="--iw:126.71;--il:8.57;--it:calc(13cqh - 6.19cqw)"><img src="kasada-social-campaigns.webp" alt="Social Content design example" loading="lazy" /><span class="at-chip">Social Content</span></span><span class="at-lyr" style="--iw:126.71;--il:8.57;--it:calc(13cqh - 6.19cqw)"><img src="kasada-social-campaigns.webp" alt="" /><span class="at-chip"></span></span></figure></div></div><div class="at-pane" role="tabpanel" id="at-p2" aria-labelledby="at-t2" hidden><div class="at-copy"><h4 class="at-title at-a" style="--i:0">Long-form people<br>actually finish.</h4><p class="at-desc at-a" style="--i:1">Reports, eBooks, guides, and two-pagers designed clean, on your system.</p><a class="at-link at-a" style="--i:2" href="#work"><span class="at-link-t">See the work</span> <span class="at-arr" aria-hidden="true">→</span></a></div><ul class="at-items at-a" style="--i:3"><li><span class="at-item-ico"><svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></span>Reports</li><li><span class="at-item-ico"><svg viewBox="0 0 24 24"><path d="M4 19V5a2 2 0 012-2h13v16H6a2 2 0 000 4h13"/></svg></span>eBooks</li><li><span class="at-item-ico"><svg viewBox="0 0 24 24"><path d="M12 6c-2-1.6-5-2-8-2v14c3 0 6 .4 8 2 2-1.6 5-2 8-2V4c-3 0-6 .4-8 2z"/><path d="M12 6v14"/></svg></span>Guides</li><li><span class="at-item-ico"><svg viewBox="0 0 24 24"><path d="M8 3h8l3 3v13H8z"/><path d="M5 7v14h11"/><path d="M11 10h5M11 14h5"/></svg></span>Two-Pagers</li></ul><div class="at-vis at-a" style="--i:4"><figure class="at-card at-card--big" style="--k:0" data-items="[[&quot;intrusion-reports.webp&quot;, &quot;grad-intrusion.webp&quot;, &quot;Reports&quot;, 129.94, 6.11, &quot;calc(16cqh - 11.03cqw)&quot;], [&quot;oneplus-reports.webp&quot;, &quot;grad-oneplus.webp&quot;, &quot;Reports&quot;, 129.94, 6.11, &quot;calc(16cqh - 11.03cqw)&quot;], [&quot;kasada-reports.webp&quot;, &quot;grad-kasada.webp&quot;, &quot;Reports&quot;, 122.56, 9.72, &quot;calc(16cqh - 9.26cqw)&quot;]]" data-cur="0" data-layer="0"><span class="at-bgl is-on" style="background-image:url('grad-intrusion.webp')"></span><span class="at-bgl"></span><span class="at-lyr is-on" style="--iw:129.94;--il:6.11;--it:calc(16cqh - 11.03cqw)"><img src="intrusion-reports.webp" alt="Reports design example" loading="lazy" /><span class="at-chip">Reports</span></span><span class="at-lyr" style="--iw:129.94;--il:6.11;--it:calc(16cqh - 11.03cqw)"><img src="intrusion-reports.webp" alt="" /><span class="at-chip"></span></span></figure><figure class="at-card" style="--k:1" data-items="[[&quot;cybersixgill-guides.webp&quot;, &quot;grad-cybersixgill.webp&quot;, &quot;Guides&quot;, 118.92, 12.61, &quot;calc(13cqh - 10.09cqw)&quot;], [&quot;intrusion-guides.webp&quot;, &quot;grad-intrusion.webp&quot;, &quot;Guides&quot;, 151.76, -7.06, &quot;calc(13cqh - 9.18cqw)&quot;], [&quot;seemplicity-guides.webp&quot;, &quot;grad-seemplicity.webp&quot;, &quot;Guides&quot;, 118.92, 12.61, &quot;calc(13cqh - 9.13cqw)&quot;]]" data-cur="0" data-layer="0"><span class="at-bgl is-on" style="background-image:url('grad-cybersixgill.webp')"></span><span class="at-bgl"></span><span class="at-lyr is-on" style="--iw:118.92;--il:12.61;--it:calc(13cqh - 10.09cqw)"><img src="cybersixgill-guides.webp" alt="Guides design example" loading="lazy" /><span class="at-chip">Guides</span></span><span class="at-lyr" style="--iw:118.92;--il:12.61;--it:calc(13cqh - 10.09cqw)"><img src="cybersixgill-guides.webp" alt="" /><span class="at-chip"></span></span></figure><figure class="at-card" style="--k:2" data-items="[[&quot;seemplicity-2-pagers.webp&quot;, &quot;grad-seemplicity.webp&quot;, &quot;Two-Pagers&quot;, 151.76, -7.06, &quot;calc(13cqh - 9.18cqw)&quot;], [&quot;kasada-2-pagers.webp&quot;, &quot;grad-kasada.webp&quot;, &quot;Two-Pagers&quot;, 144.67, -0.34, &quot;calc(13cqh - 7.74cqw)&quot;], [&quot;intrusion-ebooks.webp&quot;, &quot;grad-intrusion.webp&quot;, &quot;eBooks&quot;, 151.76, -7.06, &quot;calc(13cqh - 9.18cqw)&quot;]]" data-cur="0" data-layer="0"><span class="at-bgl is-on" style="background-image:url('grad-seemplicity.webp')"></span><span class="at-bgl"></span><span class="at-lyr is-on" style="--iw:151.76;--il:-7.06;--it:calc(13cqh - 9.18cqw)"><img src="seemplicity-2-pagers.webp" alt="Two-Pagers design example" loading="lazy" /><span class="at-chip">Two-Pagers</span></span><span class="at-lyr" style="--iw:151.76;--il:-7.06;--it:calc(13cqh - 9.18cqw)"><img src="seemplicity-2-pagers.webp" alt="" /><span class="at-chip"></span></span></figure></div></div><div class="at-pane" role="tabpanel" id="at-p3" aria-labelledby="at-t3" hidden><div class="at-copy"><h4 class="at-title at-a" style="--i:0">Complex ideas,<br>made clear.</h4><p class="at-desc at-a" style="--i:1">Dashboards, diagrams, illustrations, and icons that explain it at a glance.</p><a class="at-link at-a" style="--i:2" href="#work"><span class="at-link-t">See the work</span> <span class="at-arr" aria-hidden="true">→</span></a></div><ul class="at-items at-a" style="--i:3"><li><span class="at-item-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 13l3.5-3.5M9 3h6"/></svg></span>Dashboards</li><li><span class="at-item-ico"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="5" rx="1.2"/><rect x="3" y="16" width="6" height="5" rx="1.2"/><rect x="15" y="16" width="6" height="5" rx="1.2"/><path d="M12 8v4M6 16v-2a2 2 0 012-2h8a2 2 0 012 2v2"/></svg></span>Diagrams</li><li><span class="at-item-ico"><svg viewBox="0 0 24 24"><path d="M12 19l7-7a4.2 4.2 0 00-6-6l-7 7-2 8z"/><path d="M11 6l7 7"/></svg></span>Illustrations</li><li><span class="at-item-ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><circle cx="17.5" cy="6.5" r="3.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="3.5"/></svg></span>Icons</li></ul><div class="at-vis at-a" style="--i:4"><figure class="at-card at-card--big" style="--k:0" data-items="[[&quot;britive-diagrams.webp&quot;, &quot;grad-britive.webp&quot;, &quot;Diagrams&quot;, 131.11, 5.44, &quot;calc(16cqh - 9.91cqw)&quot;], [&quot;kasada-diagrams.webp&quot;, &quot;grad-kasada.webp&quot;, &quot;Diagrams&quot;, 131.11, 5.44, &quot;calc(16cqh - 9.91cqw)&quot;], [&quot;seemplicity-diagrams.webp&quot;, &quot;grad-seemplicity.webp&quot;, &quot;Diagrams&quot;, 131.11, 5.44, &quot;calc(16cqh - 9.91cqw)&quot;]]" data-cur="0" data-layer="0"><span class="at-bgl is-on" style="background-image:url('grad-britive.webp')"></span><span class="at-bgl"></span><span class="at-lyr is-on" style="--iw:131.11;--il:5.44;--it:calc(16cqh - 9.91cqw)"><img src="britive-diagrams.webp" alt="Diagrams design example" loading="lazy" /><span class="at-chip">Diagrams</span></span><span class="at-lyr" style="--iw:131.11;--il:5.44;--it:calc(16cqh - 9.91cqw)"><img src="britive-diagrams.webp" alt="" /><span class="at-chip"></span></span></figure><figure class="at-card" style="--k:1" data-items="[[&quot;seemplicity-illustrations.webp&quot;, &quot;grad-seemplicity.webp&quot;, &quot;Illustrations&quot;, 112.17, 15.91, &quot;calc(13cqh - 10.57cqw)&quot;], [&quot;britive-flows.webp&quot;, &quot;grad-britive.webp&quot;, &quot;Diagrams&quot;, 120.0, 12.0, &quot;calc(13cqh - 9.07cqw)&quot;], [&quot;britive-diagrams.webp&quot;, &quot;grad-britive.webp&quot;, &quot;Diagrams&quot;, 120.0, 12.0, &quot;calc(13cqh - 9.07cqw)&quot;]]" data-cur="0" data-layer="0"><span class="at-bgl is-on" style="background-image:url('grad-seemplicity.webp')"></span><span class="at-bgl"></span><span class="at-lyr is-on" style="--iw:112.17;--il:15.91;--it:calc(13cqh - 10.57cqw)"><img src="seemplicity-illustrations.webp" alt="Illustrations design example" loading="lazy" /><span class="at-chip">Illustrations</span></span><span class="at-lyr" style="--iw:112.17;--il:15.91;--it:calc(13cqh - 10.57cqw)"><img src="seemplicity-illustrations.webp" alt="" /><span class="at-chip"></span></span></figure><figure class="at-card" style="--k:2" data-items="[[&quot;kasada-diagrams.webp&quot;, &quot;grad-kasada.webp&quot;, &quot;Diagrams&quot;, 120.0, 12.0, &quot;calc(13cqh - 9.07cqw)&quot;], [&quot;seemplicity-diagrams.webp&quot;, &quot;grad-seemplicity.webp&quot;, &quot;Diagrams&quot;, 120.0, 12.0, &quot;calc(13cqh - 9.07cqw)&quot;], [&quot;kasada-diagrams.webp&quot;, &quot;grad-kasada.webp&quot;, &quot;Diagrams&quot;, 120.0, 12.0, &quot;calc(13cqh - 9.07cqw)&quot;]]" data-cur="0" data-layer="0"><span class="at-bgl is-on" style="background-image:url('grad-kasada.webp')"></span><span class="at-bgl"></span><span class="at-lyr is-on" style="--iw:120.0;--il:12.0;--it:calc(13cqh - 9.07cqw)"><img src="kasada-diagrams.webp" alt="Diagrams design example" loading="lazy" /><span class="at-chip">Diagrams</span></span><span class="at-lyr" style="--iw:120.0;--il:12.0;--it:calc(13cqh - 9.07cqw)"><img src="kasada-diagrams.webp" alt="" /><span class="at-chip"></span></span></figure></div></div><div class="at-pane" role="tabpanel" id="at-p4" aria-labelledby="at-t4" hidden><div class="at-copy"><h4 class="at-title at-a" style="--i:0">Your brand, built<br>into your AI tools.</h4><p class="at-desc at-a" style="--i:1">Brand systems in Claude, ChatGPT, Figma, and Canva that keep new work on brand.</p><a class="at-link at-a" style="--i:2" href="#work"><span class="at-link-t">See the work</span> <span class="at-arr" aria-hidden="true">→</span></a></div><ul class="at-items at-a" style="--i:3"><li><span class="at-item-ico"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 1.6v2.4M15 1.6v2.4M9 20v2.4M15 20v2.4M1.6 9H4M1.6 15H4M20 9h2.4M20 15h2.4"/><path d="M12 8.1l1.15 2.75L15.9 12l-2.75 1.15L12 15.9l-1.15-2.75L8.1 12l2.75-1.15z"/></svg></span>AI Systems</li><li><span class="at-item-ico"><svg viewBox="0 0 24 24"><path d="M5 3h12a2 2 0 012 2v16H7a2 2 0 01-2-2z"/><path d="M5 19a2 2 0 012-2h12"/><circle cx="12" cy="9.5" r="2.4"/></svg></span>Brand Guidelines</li><li><span class="at-item-ico"><svg viewBox="0 0 24 24"><path d="M4 3l7 17 2.6-6.4L20 11z"/></svg></span>Interactive Tools</li><li><span class="at-item-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 14h6M7 17h4"/></svg></span>Landing Pages</li></ul><div class="at-vis at-a" style="--i:4"><figure class="at-card at-card--big" style="--k:0" data-items="[[&quot;b2b-0-ai-brand.webp&quot;, null, &quot;AI Systems&quot;, 146.11, -1.98, &quot;calc(16cqh - 21.28cqw)&quot;], [&quot;oneplus-landing-pages.webp&quot;, &quot;grad-oneplus.webp&quot;, &quot;Landing Pages&quot;, 137.88, 2.06, &quot;calc(16cqh - 8.34cqw)&quot;], [&quot;cybersixgill-brand-styles.webp&quot;, &quot;grad-cybersixgill.webp&quot;, &quot;Brand Guidelines&quot;, 122.71, 9.72, &quot;calc(16cqh - 11.56cqw)&quot;]]" data-cur="0" data-layer="0"><span class="at-bgl is-on at-bgl--dots" style=""></span><span class="at-bgl"></span><span class="at-lyr is-on" style="--iw:146.11;--il:-1.98;--it:calc(16cqh - 21.28cqw)"><img src="b2b-0-ai-brand.webp" alt="AI Systems design example" loading="lazy" /><span class="at-chip">AI Systems</span></span><span class="at-lyr" style="--iw:146.11;--il:-1.98;--it:calc(16cqh - 21.28cqw)"><img src="b2b-0-ai-brand.webp" alt="" /><span class="at-chip"></span></span></figure><figure class="at-card" style="--k:1" data-items="[[&quot;cybersixgill-brand-styles.webp&quot;, &quot;grad-cybersixgill.webp&quot;, &quot;Brand Guidelines&quot;, 112.31, 15.91, &quot;calc(13cqh - 10.58cqw)&quot;], [&quot;ai-brand-guardrails.svg&quot;, null, &quot;AI Systems&quot;, 70, 15, &quot;8cqh&quot;], [&quot;oneplus-brand-guidelines.webp&quot;, &quot;grad-oneplus.webp&quot;, &quot;Brand Guidelines&quot;, 120.0, 12.0, &quot;calc(13cqh - 9.07cqw)&quot;]]" data-cur="0" data-layer="0"><span class="at-bgl is-on" style="background-image:url('grad-cybersixgill.webp')"></span><span class="at-bgl"></span><span class="at-lyr is-on" style="--iw:112.31;--il:15.91;--it:calc(13cqh - 10.58cqw)"><img src="cybersixgill-brand-styles.webp" alt="Brand Guidelines design example" loading="lazy" /><span class="at-chip">Brand Guidelines</span></span><span class="at-lyr" style="--iw:112.31;--il:15.91;--it:calc(13cqh - 10.58cqw)"><img src="cybersixgill-brand-styles.webp" alt="" /><span class="at-chip"></span></span></figure><figure class="at-card" style="--k:2" data-items="[[&quot;oneplus-brand-guidelines.webp&quot;, &quot;grad-oneplus.webp&quot;, &quot;Brand Guidelines&quot;, 120.0, 12.0, &quot;calc(13cqh - 9.07cqw)&quot;], [&quot;cybersixgill-brand-styles.webp&quot;, &quot;grad-cybersixgill.webp&quot;, &quot;Brand Guidelines&quot;, 112.31, 15.91, &quot;calc(13cqh - 10.58cqw)&quot;], [&quot;b2b-0-ai-brand.webp&quot;, null, &quot;AI Systems&quot;, 133.73, 5.21, &quot;calc(13cqh - 19.48cqw)&quot;]]" data-cur="0" data-layer="0"><span class="at-bgl is-on" style="background-image:url('grad-oneplus.webp')"></span><span class="at-bgl"></span><span class="at-lyr is-on" style="--iw:120.0;--il:12.0;--it:calc(13cqh - 9.07cqw)"><img src="oneplus-brand-guidelines.webp" alt="Brand Guidelines design example" loading="lazy" /><span class="at-chip">Brand Guidelines</span></span><span class="at-lyr" style="--iw:120.0;--il:12.0;--it:calc(13cqh - 9.07cqw)"><img src="oneplus-brand-guidelines.webp" alt="" /><span class="at-chip"></span></span></figure></div></div></div>
+      <div class="at-foot"><p class="at-foot-label">Built into your tools</p><div class="at-foot-grid"><div class="int-item"><span class="int-ico"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/claude.svg" alt="" loading="lazy" onerror="this.replaceWith('Cl')" /></span>Claude</div><div class="int-item"><span class="int-ico"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/openai.svg" alt="" loading="lazy" onerror="this.replaceWith('AI')" /></span>ChatGPT</div><div class="int-item"><span class="int-ico"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/figma.svg" alt="" loading="lazy" onerror="this.replaceWith('Fi')" /></span>Figma</div><div class="int-item"><span class="int-ico"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/canva.svg" alt="" loading="lazy" onerror="this.replaceWith('Cv')" /></span>Canva</div><div class="int-item"><span class="int-ico"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/adobe.svg" alt="" loading="lazy" onerror="this.replaceWith('Ad')" /></span>Adobe Suite</div><div class="int-item"><span class="int-ico"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/framer.svg" alt="" loading="lazy" onerror="this.replaceWith('Fr')" /></span>Framer</div><div class="int-item"><span class="int-ico"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/asana.svg" alt="" loading="lazy" onerror="this.replaceWith('As')" /></span>Asana</div><div class="int-item"><span class="int-ico"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/googledrive.svg" alt="" loading="lazy" onerror="this.replaceWith('GD')" /></span>Google Drive</div><div class="int-item"><span class="int-ico"><img src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/googleslides.svg" alt="" loading="lazy" onerror="this.replaceWith('GS')" /></span>Google Slides</div></div></div>
     </div>
   </div>
 </section>
@@ -3692,7 +3821,7 @@ Cal.ns.discoveryCall("ui", { hideEventTypeDetails: false, layout: "month_view" }
   /* ---- announcement bar + nav offset ---- */
   var bar = document.createElement('div');
   bar.className = 'fx-bar';
-  bar.innerHTML = '<span class="fx-bar-l" aria-hidden="true"></span><span class="fx-bar-c"><span>Start with a free Brand Drift Audit<span class="fx-bar-long">. See where your brand is drifting.</span></span><a href="#pricing">Get Started →</a></span><span class="fx-bar-r" aria-hidden="true"></span>';
+  bar.innerHTML = '<span class="fx-bar-l" aria-hidden="true"></span><span class="fx-bar-c"><span>Start with a free Brand Drift Audit<span class="fx-bar-long">. See where your brand is drifting.</span></span><a href="#pricing"><span class="fx-bar-u">Get Started</span> <span class="fx-bar-arr" aria-hidden="true">→</span></a></span><span class="fx-bar-r" aria-hidden="true"></span>';
   document.body.insertBefore(bar, document.body.firstChild);
   function navOffset(){
     var h = bar.offsetHeight || 38;
@@ -3821,6 +3950,121 @@ Cal.ns.discoveryCall("ui", { hideEventTypeDetails: false, layout: "month_view" }
     if (h.classList.contains('hero-h1')) requestAnimationFrame(function(){ reveal(h); });
     else io.observe(h);
   });
+})();
+</script>
+<script>
+(function(){
+  var root = document.getElementById('asset-tabs'); if(!root) return;
+  var tabs = [].slice.call(root.querySelectorAll('.at-tab')), panes = [].slice.call(root.querySelectorAll('.at-pane'));
+  var mName = root.querySelector('.at-m-name'), mIco = root.querySelector('.at-m-ico'), mCur = root.querySelector('.at-m-cur');
+  var isRow = function(){ return window.matchMedia('(max-width:900px)').matches; };
+  var STEPS = 3, STEP_MS = 3000, DUR = STEPS * STEP_MS;   /* the bar fills over exactly the three examples */
+  var cur = 0, elapsed = 0, step = 0, tick = null, hovering = false, held = false, inView = false;
+  var RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var canHover = window.matchMedia && matchMedia('(hover:hover)').matches;
+  root.style.setProperty('--at-dur', DUR + 'ms');
+
+  /* ---- cards ---- */
+  function items(c){ if(!c._items) c._items = JSON.parse(c.getAttribute('data-items')); return c._items; }
+  function bgOf(g){ return g ? "url('" + g + "')" : ''; }
+  function setCard(c, n, instant){
+    var list = items(c), it = list[n], layerIdx = +c.getAttribute('data-layer');
+    var bgs = c.querySelectorAll('.at-bgl'), lyrs = c.querySelectorAll('.at-lyr');
+    var nb = bgs[1 - layerIdx], ob = bgs[layerIdx], nl = lyrs[1 - layerIdx], ol = lyrs[layerIdx];
+    nb.style.backgroundImage = bgOf(it[1]);
+    nb.classList.toggle('at-bgl--dots', !it[1]);
+    nl.querySelector('img').src = it[0]; nl.querySelector('img').alt = it[2] + ' design example';
+    nl.querySelector('.at-chip').textContent = it[2];
+    nl.style.setProperty('--iw', it[3]); nl.style.setProperty('--il', it[4]); nl.style.setProperty('--it', it[5]);
+    if(instant){
+      [nb, ob, nl, ol].forEach(function(x){ x.style.transition = 'none'; });
+    }
+    nl.classList.remove('is-exit'); nl.style.transition = 'none'; nl.classList.remove('is-on'); void nl.offsetWidth;
+    if(!instant) nl.style.transition = '';
+    nl.classList.add('is-on'); nb.classList.add('is-on');
+    ol.classList.remove('is-on'); ol.classList.add('is-exit'); ob.classList.remove('is-on');
+    if(instant){ void c.offsetWidth; [nb, ob, nl, ol].forEach(function(x){ x.style.transition = ''; }); ol.classList.remove('is-exit'); }
+    c.setAttribute('data-layer', 1 - layerIdx); c.setAttribute('data-cur', n);
+  }
+  function setStep(n, instant){
+    step = n;
+    [].slice.call(panes[cur].querySelectorAll('.at-card')).forEach(function(c, k){
+      if(+c.getAttribute('data-cur') === n && !instant) return;
+      if(instant) setCard(c, n, true); else setTimeout(function(){ setCard(c, n, false); }, k * 140);   /* gentle cascade */
+    });
+  }
+  function preload(p){
+    [].slice.call(p.querySelectorAll('.at-card')).forEach(function(c){ items(c).forEach(function(it){ var i = new Image(); i.src = it[0]; }); });
+  }
+
+  /* ---- tabs + clock ---- */
+  function place(){}
+  /* phone header: current category name + icon animate in (same rise as the rest of the module) */
+  function setHeader(initial){
+    if(!mName) return;
+    var t = tabs[cur];
+    mName.textContent = t.getAttribute('aria-label');
+    mIco.innerHTML = t.querySelector('.at-tab-ico').innerHTML;
+    if(!initial){ mCur.classList.remove('is-in'); void mCur.offsetWidth; mCur.classList.add('is-in'); }
+  }
+  function restart(){
+    held = false; root.classList.remove('is-run', 'is-held'); void root.offsetWidth; elapsed = 0;
+    setStep(0, true);
+    if(!RM && inView) root.classList.add('is-run');
+  }
+  function show(i){
+    cur = (i + tabs.length) % tabs.length;
+    tabs.forEach(function(t, k){ var on = k === cur; t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1; });
+    panes.forEach(function(p, k){ var on = k === cur; p.classList.toggle('is-active', on); if(on) p.removeAttribute('hidden'); });
+    setHeader();
+    preload(panes[cur]);
+    var strip = tabs[cur].parentNode;   /* phone: keep the active pill centred in the scrolling row */
+    if(strip.scrollWidth > strip.clientWidth + 2 && isRow())
+      strip.scrollTo({left: tabs[cur].offsetLeft - (strip.clientWidth - tabs[cur].offsetWidth) / 2, behavior: 'smooth'});
+    restart();
+  }
+  /* Hovering never freezes the animation: the current tab plays through to its end (bar full, last example
+     showing), then holds there. When the pointer leaves, the next tab starts straight away. */
+  function loop(){
+    if(tick) return;
+    var last = performance.now();
+    tick = setInterval(function(){
+      var now = performance.now(), dt = Math.min(now - last, 500); last = now;   /* real time, so a throttled background tab cannot drift */
+      if(!inView || RM || held) return;
+      elapsed += dt;
+      var n = Math.min(STEPS - 1, Math.floor(elapsed / STEP_MS));
+      if(n !== step) setStep(n, false);
+      if(elapsed >= DUR){
+        if(hovering){ held = true; root.classList.add('is-held'); }
+        else show(cur + 1);
+      }
+    }, 50);
+  }
+  tabs.forEach(function(t, k){
+    t.addEventListener('click', function(){ show(k); });
+    t.addEventListener('keydown', function(e){
+      var n = k;
+      if(e.key === 'ArrowDown' || e.key === 'ArrowRight') n = k + 1;
+      else if(e.key === 'ArrowUp' || e.key === 'ArrowLeft') n = k - 1;
+      else if(e.key === 'Home') n = 0; else if(e.key === 'End') n = tabs.length - 1; else return;
+      e.preventDefault(); show(n); tabs[(n + tabs.length) % tabs.length].focus();
+    });
+  });
+  if(canHover){
+    var phone = function(){ return window.matchMedia('(max-width:620px)').matches; };
+    root.addEventListener('mouseenter', function(){ if(!phone()) hovering = true; });
+    root.addEventListener('mouseleave', function(){ hovering = false; if(held) show(cur + 1); });
+  }
+  if(RM) root.classList.add('is-static');
+  new IntersectionObserver(function(es){
+    var was = inView; inView = es[0].isIntersecting;
+    if(inView && !was){ preload(panes[cur]); restart(); loop(); }
+    if(!inView){ root.classList.remove('is-run'); }
+  }, {threshold: 0.35}).observe(root);
+  setHeader(true);
+  [].slice.call(root.querySelectorAll('.at-prev')).forEach(function(b){ b.addEventListener('click', function(){ show(cur - 1); }); });
+  [].slice.call(root.querySelectorAll('.at-next')).forEach(function(b){ b.addEventListener('click', function(){ show(cur + 1); }); });
+  window.addEventListener('load', function(){ setTimeout(function(){ panes.forEach(preload); }, 1500); });
 })();
 </script>
 </body>
